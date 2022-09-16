@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -15,7 +16,6 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.text.set
 import androidx.core.text.toSpannable
 import nl.dionsegijn.konfetti.xml.KonfettiView
 
@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity()
 	private fun initializeGame()
 	{
 //		Toast.makeText(applicationContext, "Word: $wordToGuess", Toast.LENGTH_SHORT).show()
+//		Log.i("WORD", "WINNING WORD: $wordToGuess")
 
 		// User Input Answers
 		val guessNumOne = findViewById<TextView>(R.id.guessNumOneAnswer)
@@ -105,6 +106,7 @@ class MainActivity : AppCompatActivity()
 			wordToGuess = FourLetterWordList.FourLetterWordList.getRandomFourLetterWord().uppercase()
 
 //			Toast.makeText(applicationContext, "Word: $wordToGuess", Toast.LENGTH_SHORT).show()
+//			Log.i("WORD", "WINNING WORD: $wordToGuess")
 
 			if (checkWordString != "OOOO")
 			{
