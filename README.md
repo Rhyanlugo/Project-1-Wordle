@@ -34,7 +34,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-[x] (https://github.com/Rhyanlugo/Project-1-Wordle/blob/master/Wordle.gif)
+![](https://github.com/Rhyanlugo/Project-1-Wordle/blob/master/Wordle.gif)
 
 <!-- Replace this with whatever GIF tool you used! -->
 GIF created with ...  [ScreenToGif](https://www.screentogif.com/) for Windows
