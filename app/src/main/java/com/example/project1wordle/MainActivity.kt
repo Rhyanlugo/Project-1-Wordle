@@ -5,6 +5,9 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -12,10 +15,14 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.set
+import androidx.core.text.toSpannable
+import nl.dionsegijn.konfetti.xml.KonfettiView
 
 class MainActivity : AppCompatActivity()
 {
 	private var wordToGuess: String = FourLetterWordList.FourLetterWordList.getRandomFourLetterWord().uppercase()
+	private lateinit var viewKonfetti: KonfettiView
 
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
@@ -27,7 +34,7 @@ class MainActivity : AppCompatActivity()
 
 	private fun initializeGame()
 	{
-//		Toast.makeText(applicationContext, "Word: $wordToGuess", Toast.LENGTH_SHORT).show()
+		Toast.makeText(applicationContext, "Word: $wordToGuess", Toast.LENGTH_SHORT).show()
 
 		// User Input Answers
 		val guessNumOne = findViewById<TextView>(R.id.guessNumOneAnswer)
@@ -41,17 +48,23 @@ class MainActivity : AppCompatActivity()
 
 		// Input text field and button
 		val editTextBox = findViewById<EditText>(R.id.inputTextBox)
+		val streakText = findViewById<TextView>(R.id.streakText)
 		val guessBtn = findViewById<Button>(R.id.guessBtn)
 		var resetBtn = findViewById<Button>(R.id.resetBtn)
-
 
 		// Word display
 		var wordReveal = findViewById<TextView>(R.id.wordReveal)
 		wordReveal.text = wordToGuess
 
 		var numOfGuess = 3
+		var streak = 0
+		streakText.text = "Streak: $streak"
 		var userWordInput: String
-		var checkWordString: String
+		var checkWordString = ""
+
+		var sb : SpannableString
+
+		viewKonfetti = findViewById(R.id.konfettiView)
 
 		guessBtn.setOnClickListener {
 			if (numOfGuess > 0)
@@ -62,23 +75,27 @@ class MainActivity : AppCompatActivity()
 				{
 					checkWordString = checkGuess(userWordInput)
 
+					sb = setSpannableText(checkWordString, userWordInput)
+
 					if (checkWordString == "OOOO")
 					{
 						grayOutButtonAndEditTextFromWin(guessBtn, resetBtn, editTextBox, wordReveal)
+						streak++
+						streakText.text = "Streak: $streak"
 					}
 
 					when (numOfGuess)
 					{
-						3 -> setGuessTextViews(guessNumOne, guessNumOneCheck, userWordInput, checkWordString)
-						2 -> setGuessTextViews(guessNumTwo, guessNumTwoCheck, userWordInput, checkWordString)
-						1 -> setGuessTextViews(guessNumThree, guessNumThreeCheck, userWordInput, checkWordString)
+						3 -> setGuessTextViews(guessNumOne, guessNumOneCheck, userWordInput, sb)
+						2 -> setGuessTextViews(guessNumTwo, guessNumTwoCheck, userWordInput, sb)
+						1 -> setGuessTextViews(guessNumThree, guessNumThreeCheck, userWordInput, sb)
 					}
 
 					numOfGuess--
 				}
 			}
 
-			if (numOfGuess == 0)
+			if (numOfGuess == 0 && checkWordString != "OOOO")
 			{
 				grayOutButtonAndEditTextFromLoss(guessBtn, resetBtn, editTextBox, wordReveal)
 			}
@@ -87,7 +104,13 @@ class MainActivity : AppCompatActivity()
 		resetBtn.setOnClickListener {
 			wordToGuess = FourLetterWordList.FourLetterWordList.getRandomFourLetterWord().uppercase()
 
-//			Toast.makeText(applicationContext, "Word: $wordToGuess", Toast.LENGTH_SHORT).show()
+			Toast.makeText(applicationContext, "Word: $wordToGuess", Toast.LENGTH_SHORT).show()
+
+			if (checkWordString != "OOOO")
+			{
+				streak = 0
+				streakText.text = "Streak: $streak"
+			}
 
 			guessNumOne.text = ""
 			guessNumTwo.text = ""
@@ -144,15 +167,42 @@ class MainActivity : AppCompatActivity()
 		return result
 	}
 
-	private fun setGuessTextViews(guessNum : TextView, guessNumCheck : TextView, userWordInput : String, checkWordString : String)
+	private fun setSpannableText(checkWordString: String, userWordInput : String) : SpannableString
+	{
+		var sb : SpannableString = userWordInput.toSpannable() as SpannableString
+
+		sb.setSpan(ForegroundColorSpan(Color.RED), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+		for (i in checkWordString.indices)
+		{
+			if (checkWordString[i] == 'O')
+			{
+				sb.setSpan(ForegroundColorSpan(Color.RED), i, i+1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+			}
+			else if (checkWordString[i] == '+')
+			{
+				sb.setSpan(ForegroundColorSpan(Color.GREEN), i, i+1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+			}
+			else
+			{
+				sb.setSpan(ForegroundColorSpan(Color.WHITE), i, i+1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+			}
+		}
+
+		return sb
+	}
+
+	private fun setGuessTextViews(guessNum : TextView, guessNumCheck : TextView, userWordInput : String, sb : SpannableString)
 	{
 		guessNum.text = userWordInput
-		guessNumCheck.text = checkWordString
+		guessNumCheck.text = sb
 	}
 
 	private fun grayOutButtonAndEditTextFromWin(guessBtn : Button, resetBtn : Button, editTextBox: EditText, wordReveal : TextView)
 	{
 		Toast.makeText(applicationContext, "You guessed the word!", Toast.LENGTH_SHORT).show()
+
+		rain()
 
 		wordReveal.visibility = View.VISIBLE
 
@@ -206,6 +256,35 @@ class MainActivity : AppCompatActivity()
 		editTextBox.setText("")
 		editTextBox.hint = resources.getString(R.string.enter_4_letter_guess_here)
 
+	}
+
+
+	private fun festive() {
+		/**
+		 * See [Presets] for this configuration
+		 */
+		viewKonfetti.start(Presets.festive())
+	}
+
+	private fun explode() {
+		/**
+		 * See [Presets] for this configuration
+		 */
+		viewKonfetti.start(Presets.explode())
+	}
+
+	private fun parade() {
+		/**
+		 * See [Presets] for this configuration
+		 */
+		viewKonfetti.start(Presets.parade())
+	}
+
+	private fun rain() {
+		/**
+		 * See [Presets] for this configuration
+		 */
+		viewKonfetti.start(Presets.rain())
 	}
 
 	private fun closeKeyboard()
