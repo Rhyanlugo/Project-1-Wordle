@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity()
 
 	private fun initializeGame()
 	{
-		Toast.makeText(applicationContext, "Word: $wordToGuess", Toast.LENGTH_SHORT).show()
+//		Toast.makeText(applicationContext, "Word: $wordToGuess", Toast.LENGTH_SHORT).show()
 
 		// User Input Answers
 		val guessNumOne = findViewById<TextView>(R.id.guessNumOneAnswer)
@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity()
 		resetBtn.setOnClickListener {
 			wordToGuess = FourLetterWordList.FourLetterWordList.getRandomFourLetterWord().uppercase()
 
-			Toast.makeText(applicationContext, "Word: $wordToGuess", Toast.LENGTH_SHORT).show()
+//			Toast.makeText(applicationContext, "Word: $wordToGuess", Toast.LENGTH_SHORT).show()
 
 			if (checkWordString != "OOOO")
 			{
