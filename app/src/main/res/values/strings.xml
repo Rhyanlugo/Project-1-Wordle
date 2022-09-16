@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Project 1 Wordle</string>
+    <string name="guess_1">Guess #1</string>
+    <string name="enter_4_letter_guess_here">Enter 4 letter guess here</string>
+    <string name="guess_2">Guess #2</string>
+    <string name="guess_3">Guess #3</string>
+    <string name="guess">Guess!</string>
+    <string name="guess_1_check">Guess #1 Check</string>
+    <string name="guess_2_check">Guess #2 Check</string>
+    <string name="guess_3_check">Guess #3 Check</string>
+    <string name="reset">RESET</string>
 </resources>
